@@ -1,4 +1,4 @@
-echo '[build]
+[build]
   publish = "dist/playstation-lounge-dashboard/browser"
   command = "npm run build"
 
@@ -18,4 +18,3 @@ echo '[build]
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-' > netlify.toml
