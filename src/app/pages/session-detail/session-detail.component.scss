@@ -1,0 +1,37 @@
+:host {
+  display: block;
+}
+
+ion-card {
+  margin-bottom: 1rem;
+}
+
+ion-chip {
+  margin: 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--ion-color-light);
+  margin: 1rem 0;
+}
+
+.invoice-total {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--ion-color-primary);
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  ion-content {
+    --padding-start: 2rem;
+    --padding-end: 2rem;
+  }
+
+  ion-card {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

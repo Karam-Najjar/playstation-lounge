@@ -1,0 +1,130 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/" text="رجوع"></ion-back-button>
+    </ion-buttons>
+    <ion-title>بدء جلسة جديدة</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Info Card -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="game-controller" slot="start"></ion-icon>
+        جلسة لعب جديدة
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p>املأ النموذج لبدء جلسة لعب جديدة</p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Session Form -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>تفاصيل الجلسة</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list>
+        <!-- Device Selection -->
+        <ion-item>
+          <ion-label position="stacked">جهاز البلايستيشن *</ion-label>
+          <ion-select
+            [(ngModel)]="selectedDevice"
+            aria-label="اختر الجهاز"
+            placeholder="اختر جهاز البلايستيشن"
+            interface="action-sheet"
+          >
+            <ion-select-option *ngFor="let device of devices()" [value]="device">
+              {{ device }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- Player Count Selection -->
+        <ion-item>
+          <ion-label position="stacked">عدد اللاعبين *</ion-label>
+          <ion-select
+            [(ngModel)]="selectedPlayerCount"
+            aria-label="اختر عدد اللاعبين"
+            interface="action-sheet"
+          >
+            <ion-select-option value="1-2">
+              ١-٢ لاعبين ({{ rates().oneTwo | currency: 'SYP ' }}/ساعة)
+            </ion-select-option>
+            <ion-select-option value="3-4">
+              ٣-٤ لاعبين ({{ rates().threeFour | currency: 'SYP ' }}/ساعة)
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- Customer Name (Optional) -->
+        <ion-item>
+          <ion-label position="stacked">اسم العميل (اختياري)</ion-label>
+          <ion-input
+            [(ngModel)]="customerName"
+            type="text"
+            placeholder="أدخل اسم العميل"
+            aria-label="اسم العميل"
+          ></ion-input>
+        </ion-item>
+
+        <!-- Rate Display -->
+        <ion-item>
+          <ion-label>
+            <h3>السعر الحالي</h3>
+            <p>{{ getRateText() }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Action Buttons -->
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-button
+          expand="block"
+          color="primary"
+          (click)="startSession()"
+          [disabled]="!selectedDevice || !selectedPlayerCount"
+        >
+          بدء الجلسة
+        </ion-button>
+      </ion-col>
+      <ion-col size="6">
+        <ion-button expand="block" color="medium" fill="outline" (click)="resetForm()">
+          إعادة تعيين
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Quick Tips -->
+  <ion-card color="light">
+    <ion-card-header>
+      <ion-card-title>ملاحظات سريعة</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ul>
+        <li>يمكنك إضافة طلبات الطعام والشراب للجلسة من لوحة التحكم الرئيسية</li>
+        <li>يمكنك إيقاف واستئناف الجلسة في أي وقت</li>
+        <li>سيتم احتساب التكلفة تلقائياً بناءً على مدة الجلسة</li>
+      </ul>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+<!-- Success Alert -->
+<ion-alert
+  [isOpen]="showAlert()"
+  [header]="'تمت العملية'"
+  [message]="alertMessage()"
+  [buttons]="['حسناً']"
+  (didDismiss)="showAlert.set(false)"
+></ion-alert>

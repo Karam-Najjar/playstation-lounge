@@ -1,0 +1,139 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>🎮 PlayStation Lounge</ion-title>
+    <ion-buttons slot="end" *ngIf="isPinEnabled()">
+      <ion-button (click)="logout()" fill="clear">
+        <ion-icon name="log-out" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- KPI Cards -->
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" size-md="3">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>إيرادات اليوم</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <h2>{{ todayRevenue() }}</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6" size-md="3">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>جلسات نشطة</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <h2>{{ activeSessions().length }}</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6" size-md="3">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>جلسات اليوم</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <h2>{{ todaySessions().length }}</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6" size-md="3">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>ساعات اللعب</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <h2>{{ totalHoursPlayed() }}</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Active Sessions -->
+  <ion-card *ngIf="activeSessions().length > 0">
+    <ion-card-header>
+      <ion-card-title>الجلسات النشطة</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list>
+        <ion-item
+          button
+          [routerLink]="['/session', session.id]"
+          *ngFor="let session of activeSessions()"
+        >
+          <ion-label>
+            <h2>{{ session.deviceName }}</h2>
+            <p>
+              <ion-chip color="primary" *ngIf="session.playerCount === '1-2'">
+                1-2 لاعبين
+              </ion-chip>
+              <ion-chip color="secondary" *ngIf="session.playerCount === '3-4'">
+                3-4 لاعبين
+              </ion-chip>
+              {{ session.customerName || 'عميل' }}
+            </p>
+            <p>بدأت: {{ formatTime(session.startTime) }}</p>
+            <p>المدة: {{ getSessionDuration(session) }}</p>
+          </ion-label>
+
+          <ion-badge slot="end" color="success">
+            {{ formatCurrency(getSessionCost(session)) }}
+          </ion-badge>
+
+          <ion-button slot="end" fill="clear" (click)="togglePause(session.id)">
+            <ion-icon [name]="session.isPaused ? 'play' : 'pause'" slot="icon-only"></ion-icon>
+          </ion-button>
+
+          <ion-button slot="end" fill="clear" color="danger" (click)="endSession(session.id)">
+            <ion-icon name="stop" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Quick Actions -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>إجراءات سريعة</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6">
+            <ion-button expand="block" color="primary" routerLink="/new-session">
+              <ion-icon name="add" slot="start"></ion-icon>
+              جلسة جديدة
+            </ion-button>
+          </ion-col>
+          <ion-col size="6">
+            <ion-button expand="block" color="secondary" routerLink="/history">
+              <ion-icon name="time" slot="start"></ion-icon>
+              السجل
+            </ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row class="ion-margin-top">
+          <ion-col size="6">
+            <ion-button expand="block" color="tertiary" routerLink="/settings">
+              <ion-icon name="settings" slot="start"></ion-icon>
+              الإعدادات
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

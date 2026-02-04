@@ -1,0 +1,413 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/" text="رجوع"></ion-back-button>
+    </ion-buttons>
+    <ion-title>تفاصيل الجلسة</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Session not found -->
+  <div *ngIf="!session()" class="ion-text-center ion-padding">
+    <h2>الجلسة غير موجودة</h2>
+    <p>يتم العودة للصفحة الرئيسية...</p>
+  </div>
+
+  <!-- Session Details -->
+  <div *ngIf="session()">
+    <!-- Session Info Card -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="game-controller" slot="start"></ion-icon>
+          {{ session().deviceName }}
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6">
+              <ion-text color="medium">
+                <small>العميل</small>
+              </ion-text>
+              <p>
+                <strong>{{ session().customerName || 'عميل' }}</strong>
+              </p>
+            </ion-col>
+
+            <ion-col size="6">
+              <ion-text color="medium">
+                <small>عدد اللاعبين</small>
+              </ion-text>
+              <p>
+                <ion-chip color="primary" *ngIf="session().playerCount === '1-2'">
+                  1-2 لاعبين
+                </ion-chip>
+                <ion-chip color="secondary" *ngIf="session().playerCount === '3-4'">
+                  3-4 لاعبين
+                </ion-chip>
+              </p>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col size="6">
+              <ion-text color="medium">
+                <small>بدأت في</small>
+              </ion-text>
+              <p>
+                <strong>{{ formatTime(session().startTime) }}</strong>
+              </p>
+            </ion-col>
+
+            <ion-col size="6">
+              <ion-text color="medium">
+                <small>المدة</small>
+              </ion-text>
+              <p>
+                <strong>{{ sessionDuration() }}</strong>
+              </p>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col size="12">
+              <ion-text color="medium">
+                <small>السعر</small>
+              </ion-text>
+              <p>
+                <strong>{{ getRateText() }}</strong>
+              </p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Cost Summary -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="cash" slot="start"></ion-icon>
+          التفاصيل المالية
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list>
+          <ion-item>
+            <ion-label>تكلفة الوقت</ion-label>
+            <ion-note slot="end">{{ formatCurrency(sessionCost()) }}</ion-note>
+          </ion-item>
+
+          <ion-item *ngIf="session().orders.length > 0">
+            <ion-label>الطلبات</ion-label>
+            <ion-note slot="end">{{ formatCurrency(ordersTotal()) }}</ion-note>
+          </ion-item>
+
+          <ion-item>
+            <ion-label><strong>المجموع</strong></ion-label>
+            <ion-note slot="end" color="primary">
+              <strong>{{ formatCurrency(sessionTotal()) }}</strong>
+            </ion-note>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Orders List -->
+    <ion-card *ngIf="session().orders.length > 0">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="cafe" slot="start"></ion-icon>
+          الطلبات المضافة
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let order of session().orders">
+            <ion-label>
+              <h3>{{ order.itemName }}</h3>
+              <p>{{ order.quantity }} × {{ formatCurrency(order.unitPrice) }}</p>
+            </ion-label>
+            <ion-note slot="end">{{ formatCurrency(order.totalPrice) }}</ion-note>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Action Buttons -->
+    <ion-grid>
+      <ion-row>
+        <!-- Pause/Resume Button -->
+        <ion-col size="6" *ngIf="!session().endTime">
+          <ion-button
+            expand="block"
+            [color]="session().isPaused ? 'success' : 'warning'"
+            (click)="togglePause()"
+          >
+            <ion-icon [name]="session().isPaused ? 'play' : 'pause'" slot="start"></ion-icon>
+            {{ session().isPaused ? 'استئناف' : 'إيقاف مؤقت' }}
+          </ion-button>
+        </ion-col>
+
+        <!-- Add Order Button -->
+        <ion-col size="6" *ngIf="!session().endTime">
+          <ion-button expand="block" color="tertiary" (click)="addOrder()">
+            <ion-icon name="add" slot="start"></ion-icon>
+            إضافة طلب
+          </ion-button>
+        </ion-col>
+
+        <!-- End Session Button -->
+        <ion-col size="6" *ngIf="!session().endTime">
+          <ion-button expand="block" color="danger" (click)="endSession()">
+            <ion-icon name="stop" slot="start"></ion-icon>
+            إنهاء الجلسة
+          </ion-button>
+        </ion-col>
+
+        <!-- Payment Status -->
+        <ion-col size="6" *ngIf="session().endTime">
+          <ion-button
+            expand="block"
+            [color]="session().paymentStatus === 'paid' ? 'success' : 'medium'"
+            (click)="updatePaymentStatus(session().paymentStatus === 'paid' ? 'unpaid' : 'paid')"
+          >
+            <ion-icon name="card" slot="start"></ion-icon>
+            {{ session().paymentStatus === 'paid' ? 'مدفوعة' : 'غير مدفوعة' }}
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>
+
+<!-- Add Order Modal -->
+<ion-modal [isOpen]="isAddingOrder()" (didDismiss)="isAddingOrder.set(false)">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>إضافة طلب جديد</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="isAddingOrder.set(false)">إلغاء</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <ion-list>
+        <ion-item>
+          <ion-label position="stacked">المنتج</ion-label>
+          <ion-select
+            [(ngModel)]="selectedProduct"
+            aria-label="اختر المنتج"
+            placeholder="اختر المنتج"
+          >
+            <ion-select-option *ngFor="let product of products()" [value]="product">
+              {{ product.name }} - {{ formatCurrency(product.price) }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">الكمية</ion-label>
+          <ion-input
+            [(ngModel)]="orderQuantity"
+            type="number"
+            min="1"
+            placeholder="أدخل الكمية"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item *ngIf="selectedProduct()">
+          <ion-label>المجموع</ion-label>
+          <ion-note slot="end">
+            {{ formatCurrency(selectedProduct()?.price * orderQuantity()) }}
+          </ion-note>
+        </ion-item>
+      </ion-list>
+
+      <ion-button
+        expand="block"
+        color="primary"
+        (click)="confirmAddOrder()"
+        [disabled]="!selectedProduct() || orderQuantity() < 1"
+        class="ion-margin-top"
+      >
+        تأكيد الإضافة
+      </ion-button>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<!-- End Session/Invoice Modal -->
+<ion-modal [isOpen]="showEndSessionModal()" (didDismiss)="showEndSessionModal.set(false)">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>فاتورة الجلسة</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="showEndSessionModal.set(false)">إغلاق</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding" *ngIf="session()">
+      <!-- Invoice Content -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title class="ion-text-center"> 🎮 PlayStation Lounge </ion-card-title>
+          <ion-card-subtitle class="ion-text-center"> فاتورة الجلسة </ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content>
+          <!-- Invoice Details -->
+          <ion-grid>
+            <ion-row>
+              <ion-col size="6">
+                <strong>الجهاز:</strong>
+              </ion-col>
+              <ion-col size="6" class="ion-text-end">
+                {{ session().deviceName }}
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col size="6">
+                <strong>العميل:</strong>
+              </ion-col>
+              <ion-col size="6" class="ion-text-end">
+                {{ session().customerName || 'عميل' }}
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col size="6">
+                <strong>عدد اللاعبين:</strong>
+              </ion-col>
+              <ion-col size="6" class="ion-text-end">
+                {{ session().playerCount === '1-2' ? '1-2 لاعبين' : '3-4 لاعبين' }}
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col size="6">
+                <strong>وقت البدء:</strong>
+              </ion-col>
+              <ion-col size="6" class="ion-text-end">
+                {{ formatDateTime(session().startTime) }}
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col size="6">
+                <strong>وقت الانتهاء:</strong>
+              </ion-col>
+              <ion-col size="6" class="ion-text-end">
+                {{ formatDateTime(session().endTime!) }}
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col size="6">
+                <strong>المدة الإجمالية:</strong>
+              </ion-col>
+              <ion-col size="6" class="ion-text-end">
+                {{ sessionDuration() }}
+              </ion-col>
+            </ion-row>
+
+            <!-- Divider -->
+            <ion-row class="ion-margin-vertical">
+              <ion-col>
+                <hr />
+              </ion-col>
+            </ion-row>
+
+            <!-- Cost Breakdown -->
+            <ion-row>
+              <ion-col size="6"> تكلفة الوقت: </ion-col>
+              <ion-col size="6" class="ion-text-end">
+                {{ formatCurrency(sessionCost()) }}
+              </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="ordersTotal() > 0">
+              <ion-col size="6"> الطلبات: </ion-col>
+              <ion-col size="6" class="ion-text-end">
+                {{ formatCurrency(ordersTotal()) }}
+              </ion-col>
+            </ion-row>
+
+            <!-- Divider -->
+            <ion-row class="ion-margin-vertical">
+              <ion-col>
+                <hr />
+              </ion-col>
+            </ion-row>
+
+            <!-- Total -->
+            <ion-row>
+              <ion-col size="6">
+                <strong>المجموع:</strong>
+              </ion-col>
+              <ion-col size="6" class="ion-text-end">
+                <strong>{{ formatCurrency(sessionTotal()) }}</strong>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <!-- Thank you message -->
+          <div class="ion-text-center ion-margin-top">
+            <p>شكراً لزيارتكم! نرغب برؤيتكم مرة أخرى 🎮</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Action Buttons -->
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-button
+              expand="block"
+              color="success"
+              (click)="updatePaymentStatus('paid'); showEndSessionModal.set(false)"
+            >
+              <ion-icon name="card" slot="start"></ion-icon>
+              تم الدفع
+            </ion-button>
+          </ion-col>
+          <ion-col>
+            <ion-button
+              expand="block"
+              color="medium"
+              (click)="updatePaymentStatus('unpaid'); showEndSessionModal.set(false)"
+            >
+              <ion-icon name="time" slot="start"></ion-icon>
+              دفع لاحقاً
+            </ion-button>
+          </ion-col>
+          <ion-col size="6" *ngIf="session()?.endTime">
+            <ion-button expand="block" color="warning" (click)="exportInvoice()">
+              <ion-icon name="document" slot="start"></ion-icon>
+              تصدير فاتورة
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<!-- Alert Component -->
+<ion-alert
+  [isOpen]="showAlert()"
+  [header]="alertHeader()"
+  [message]="alertMessage()"
+  [buttons]="['حسناً']"
+  (didDismiss)="showAlert.set(false)"
+></ion-alert>

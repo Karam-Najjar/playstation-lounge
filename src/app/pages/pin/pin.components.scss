@@ -1,0 +1,72 @@
+:host {
+  display: block;
+}
+
+.pin-display {
+  margin: 2rem 0;
+
+  .pin-dots {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+
+    .pin-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--ion-color-medium);
+      background: transparent;
+      transition: all 0.3s ease;
+
+      &.filled {
+        background: var(--ion-color-primary);
+        border-color: var(--ion-color-primary);
+      }
+    }
+  }
+
+  .pin-input {
+    font-family: monospace;
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+    margin: 0;
+    color: var(--ion-color-medium);
+  }
+}
+
+.keypad {
+  max-width: 300px;
+  margin: 0 auto;
+
+  ion-button {
+    height: 60px;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .keypad {
+    max-width: 400px;
+
+    ion-button {
+      height: 70px;
+      font-size: 1.5rem;
+    }
+  }
+
+  .pin-display {
+    .pin-dots {
+      .pin-dot {
+        width: 25px;
+        height: 25px;
+      }
+    }
+
+    .pin-input {
+      font-size: 2rem;
+    }
+  }
+}
