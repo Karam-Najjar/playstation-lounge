@@ -1,0 +1,116 @@
+ion-toolbar {
+  --background: var(--dark-color, #1f2937);
+  --color: white;
+  --border-color: transparent;
+  
+  &::after {
+    content: none;
+  }
+  
+  ion-title {
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  
+  // Dark mode toggle styles
+  .dark-mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 12px;
+    margin-right: 8px;
+    
+    .dark-mode-icon {
+      font-size: 20px;
+      color: var(--ion-color-light);
+      transition: color 0.3s ease;
+    }
+    
+    ion-toggle {
+      --background: rgba(255, 255, 255, 0.2);
+      --background-checked: var(--ion-color-primary);
+      --handle-background: #ffffff;
+      --handle-background-checked: #ffffff;
+      --handle-box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      width: 48px;
+      height: 28px;
+      
+      &::part(track) {
+        border-radius: 20px;
+      }
+      
+      &::part(handle) {
+        border-radius: 50%;
+      }
+    }
+  }
+  
+  // Adjust logout button spacing when dark mode toggle is present
+  @if showDarkModeToggle {
+    ion-button[fill="clear"] {
+      margin-left: 4px;
+    }
+  }
+}
+
+ion-content {
+  --background: #f5f7fa;
+  --padding-bottom: max(24px, env(safe-area-inset-bottom));
+  --padding-top: 16px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+// Dark mode styles for the layout itself
+:host-context(.dark-mode) {
+  ion-toolbar {
+    --background: #0f172a;
+    --color: #f1f5f9;
+    
+    .dark-mode-toggle {
+      .dark-mode-icon {
+        color: #fbbf24;
+      }
+      
+      ion-toggle {
+        --background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+  
+  ion-content {
+    --background: #0f172a;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .dark-mode-toggle {
+    margin-left: 8px;
+    margin-right: 4px;
+    
+    ion-toggle {
+      width: 44px;
+      height: 26px;
+    }
+    
+    .dark-mode-icon {
+      font-size: 18px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .dark-mode-toggle {
+    margin-left: 6px;
+    
+    .dark-mode-icon {
+      display: none; // Hide icon on very small screens
+    }
+    
+    ion-toggle {
+      width: 42px;
+      height: 24px;
+    }
+  }
+}

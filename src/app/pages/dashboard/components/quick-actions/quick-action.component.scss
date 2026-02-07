@@ -1,0 +1,391 @@
+.quick-actions-card {
+  --background: white;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+  }
+}
+
+ion-card-header {
+  padding: 24px 24px 16px 24px;
+  border-bottom: 2px solid #f1f5f9;
+  
+  ion-card-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: -0.25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    
+    &::before {
+      content: '⚡';
+      font-size: 20px;
+      color: #f59e0b;
+    }
+  }
+}
+
+ion-card-content {
+  padding: 24px;
+}
+
+.quick-action-grid {
+  padding: 0;
+}
+
+.quick-action-col {
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+// Reset Ionic button native styles
+.quick-action-button {
+  --border-radius: 14px;
+  --border-width: 0;
+  --border-style: none;
+  --border-color: transparent;
+  --box-shadow: none;
+  --overflow: hidden;
+  
+  // Important: Reset the native button element
+  &::part(native) {
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    border: 2px solid transparent !important;
+  }
+  
+  // Target the inner button element
+  .button-native {
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    border: 2px solid transparent !important;
+  }
+  
+  // General button styles
+  font-weight: 700;
+  text-transform: none;
+  height: 68px;
+  width: 100%;
+  max-width: 240px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 15px;
+  letter-spacing: 0.15px;
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  
+  ion-icon {
+    font-size: 22px;
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-4px);
+    
+    ion-icon {
+      transform: scale(1.15);
+    }
+  }
+  
+  &:active {
+    transform: translateY(-2px);
+  }
+  
+  // Remove any default margins/padding
+  margin: 0;
+  padding: 0;
+  
+  // Primary button
+  &[color="primary"] {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    color: white;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+    border-color: #818cf8;
+    
+    &:hover {
+      box-shadow: 0 14px 30px rgba(79, 70, 229, 0.4);
+      background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+    }
+  }
+  
+  // Secondary button
+  &[color="secondary"] {
+    background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+    color: white;
+    box-shadow: 0 8px 20px rgba(13, 148, 136, 0.3);
+    border-color: #2dd4bf;
+    
+    &:hover {
+      box-shadow: 0 14px 30px rgba(13, 148, 136, 0.4);
+      background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+    }
+  }
+  
+  // Tertiary button
+  &[color="tertiary"] {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    color: white;
+    box-shadow: 0 8px 20px rgba(30, 41, 59, 0.3);
+    border-color: #475569;
+    
+    &:hover {
+      box-shadow: 0 14px 30px rgba(30, 41, 59, 0.4);
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+  }
+  
+  // Success button
+  &[color="success"] {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    color: white;
+    box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);
+    border-color: #34d399;
+    
+    &:hover {
+      box-shadow: 0 14px 30px rgba(5, 150, 105, 0.4);
+      background: linear-gradient(135deg, #047857 0%, #059669 100%);
+    }
+  }
+  
+  // Warning button
+  &[color="warning"] {
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+    color: white;
+    box-shadow: 0 8px 20px rgba(217, 119, 6, 0.3);
+    border-color: #fbbf24;
+    
+    &:hover {
+      box-shadow: 0 14px 30px rgba(217, 119, 6, 0.4);
+      background: linear-gradient(135deg, #b45309 0%, #d97706 100%);
+    }
+  }
+  
+  // Danger button
+  &[color="danger"] {
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    color: white;
+    box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+    border-color: #f87171;
+    
+    &:hover {
+      box-shadow: 0 14px 30px rgba(220, 38, 38, 0.4);
+      background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+    }
+  }
+  
+  // Info button
+  &[color="info"] {
+    background: linear-gradient(135deg, #0891b2 0%, #0ea5e9 100%);
+    color: white;
+    box-shadow: 0 8px 20px rgba(8, 145, 178, 0.3);
+    border-color: #38bdf8;
+    
+    &:hover {
+      box-shadow: 0 14px 30px rgba(8, 145, 178, 0.4);
+      background: linear-gradient(135deg, #075985 0%, #0891b2 100%);
+    }
+  }
+  
+  // Disabled state
+  &[disabled] {
+    opacity: 0.5;
+    transform: none !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+    cursor: not-allowed;
+    
+    &:hover {
+      transform: none !important;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+      
+      ion-icon {
+        transform: none;
+      }
+    }
+  }
+}
+
+// Alternative solution: Use a wrapper div for better control
+.quick-action-wrapper {
+  width: 100%;
+  max-width: 240px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px;
+  
+  .quick-action-button {
+    --border-radius: 14px;
+    --overflow: hidden;
+    margin: 0;
+    width: 100%;
+    height: 68px;
+    
+    &::part(native) {
+      border-radius: 14px;
+    }
+  }
+  
+  // Add specific shadow colors for each button type
+  &[data-color="primary"] {
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+    
+    &:hover {
+      box-shadow: 0 14px 30px rgba(79, 70, 229, 0.4);
+    }
+  }
+  
+  &[data-color="secondary"] {
+    box-shadow: 0 8px 20px rgba(13, 148, 136, 0.3);
+    
+    &:hover {
+      box-shadow: 0 14px 30px rgba(13, 148, 136, 0.4);
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 992px) {
+  .quick-action-button {
+    height: 62px;
+    font-size: 14px;
+    max-width: 220px;
+    
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+  
+  ion-card-header {
+    padding: 20px 20px 14px 20px;
+    
+    ion-card-title {
+      font-size: 18px;
+    }
+  }
+  
+  ion-card-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .quick-action-button {
+    height: 58px;
+    font-size: 14px;
+    max-width: 200px;
+    
+    ion-icon {
+      font-size: 18px;
+    }
+  }
+  
+  .quick-action-col {
+    padding: 6px;
+  }
+  
+  ion-card-header {
+    padding: 18px 18px 12px 18px;
+    
+    ion-card-title {
+      font-size: 17px;
+    }
+  }
+  
+  ion-card-content {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .quick-action-col {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  
+  .quick-action-button {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-action-button {
+    height: 56px;
+    font-size: 13px;
+    
+    ion-icon {
+      font-size: 16px;
+    }
+  }
+  
+  .quick-action-col {
+    padding: 6px;
+  }
+  
+  ion-card-header {
+    padding: 16px 16px 10px 16px;
+    
+    ion-card-title {
+      font-size: 16px;
+      
+      &::before {
+        font-size: 18px;
+      }
+    }
+  }
+  
+  ion-card-content {
+    padding: 16px;
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .quick-actions-card {
+    --background: #1e293b;
+    border-color: #334155;
+    background: #1e293b;
+  }
+  
+  ion-card-header {
+    border-bottom-color: #334155;
+    
+    ion-card-title {
+      color: #f1f5f9;
+      
+      &::before {
+        color: #fbbf24;
+      }
+    }
+  }
+}
+
+// RTL adjustments for proper centering
+[dir="rtl"] {
+  .quick-action-button {
+    ion-icon {
+      margin-left: 8px;
+      margin-right: 0;
+    }
+  }
+}
+
+// Ensure buttons are properly centered
+ion-row {
+  justify-content: center;
+}

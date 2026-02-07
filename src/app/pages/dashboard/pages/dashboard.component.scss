@@ -1,0 +1,109 @@
+:host {
+  display: block;
+  padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
+}
+
+.kpi-grid {
+  margin-bottom: 24px;
+}
+
+.sessions-card {
+  --background: white;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  margin-bottom: 24px;
+  
+  ion-card-header {
+    padding: 20px 24px 12px 24px;
+    border-bottom: 2px solid #f1f5f9;
+    
+    ion-card-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1e293b;
+      letter-spacing: -0.25px;
+      margin: 0;
+      direction: rtl;
+    }
+  }
+  
+  ion-card-content {
+    padding: 20px 24px 24px 24px;
+  }
+}
+
+// Add spacing after quick actions component
+app-quick-actions {
+  display: block;
+  margin-bottom: max(32px, env(safe-area-inset-bottom, 32px));
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  :host {
+    padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+  }
+  
+  .kpi-grid {
+    margin-bottom: 20px;
+  }
+  
+  .sessions-card {
+    margin-bottom: 20px;
+    
+    ion-card-header {
+      padding: 18px 20px 10px 20px;
+      
+      ion-card-title {
+        font-size: 18px;
+      }
+    }
+    
+    ion-card-content {
+      padding: 18px 20px 20px 20px;
+    }
+  }
+  
+  app-quick-actions {
+    margin-bottom: max(28px, env(safe-area-inset-bottom, 28px));
+  }
+}
+
+@media (max-width: 480px) {
+  :host {
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+  }
+  
+  .kpi-grid {
+    margin-bottom: 16px;
+  }
+  
+  .sessions-card {
+    margin-bottom: 16px;
+    border-radius: 14px;
+    
+    ion-card-header {
+      padding: 16px 18px 8px 18px;
+      
+      ion-card-title {
+        font-size: 17px;
+      }
+    }
+    
+    ion-card-content {
+      padding: 16px 18px 18px 18px;
+    }
+  }
+  
+  app-quick-actions {
+    margin-bottom: max(24px, env(safe-area-inset-bottom, 24px));
+  }
+}
+
+// Add a visual bottom spacer for testing
+.bottom-spacer {
+  height: env(safe-area-inset-bottom, 24px);
+  width: 100%;
+  background: transparent;
+}

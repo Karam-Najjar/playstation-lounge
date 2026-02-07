@@ -1,0 +1,45 @@
+<ion-card class="kpi-card" [class]="color">
+  <ion-card-header>
+    @if (icon) {
+      <ion-icon [name]="icon" slot="start"></ion-icon>
+    }
+    <ion-card-title>{{ title }}</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <div class="kpi-value">{{ value }}</div>
+    
+    @if (subtitle) {
+      <div class="kpi-subtitle">{{ subtitle }}</div>
+    }
+    
+    @if (trend || secondaryValue) {
+      <div class="kpi-stats">
+        @if (trend) {
+          <div class="kpi-trend" 
+               [class.positive]="trend > 0" 
+               [class.negative]="trend < 0"
+               [class.neutral]="trend === 0">
+            @if (trend > 0) {
+              <ion-icon name="trending-up"></ion-icon>
+            } @else if (trend < 0) {
+              <ion-icon name="trending-down"></ion-icon>
+            } @else {
+              <ion-icon name="remove"></ion-icon>
+            }
+            {{ Math.abs(trend) }}%
+          </div>
+        }
+        
+        @if (secondaryValue) {
+          <div class="kpi-secondary-value">
+            {{ secondaryValue }}
+            @if (secondaryLabel) {
+              <small>{{ secondaryLabel }}</small>
+            }
+          </div>
+        }
+      </div>
+    }
+  </ion-card-content>
+</ion-card>
