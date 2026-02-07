@@ -1,0 +1,26 @@
+<ion-card class="quick-actions-card">
+  <ion-card-header>
+    <ion-card-title>{{ title }}</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-grid class="quick-action-grid">
+      <ion-row>
+        @for (action of actions; track trackByAction($index, action)) {
+          <ion-col size="12" size-sm="6" size-md="4" size-lg="3" class="quick-action-col">
+            <ion-button
+              class="quick-action-button"
+              [color]="action.color"
+              [disabled]="action.disabled"
+              [routerLink]="action.route"
+              expand="block"
+            >
+              <ion-icon [name]="action.icon" slot="start"></ion-icon>
+              {{ action.label }}
+            </ion-button>
+          </ion-col>
+        }
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>

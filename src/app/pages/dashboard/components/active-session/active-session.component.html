@@ -1,0 +1,84 @@
+<ion-item
+  class="active-session"
+  [class.paused]="session.isPaused"
+  button
+  [routerLink]="['/session', session.id]"
+>
+  <div class="session-content">
+    <!-- Session Information -->
+    <div class="session-info">
+      <!-- Device Header with Status -->
+      <div class="device-header">
+        <h3>{{ session.deviceName }}</h3>
+        <div class="session-status">
+          <ion-icon [name]="session.isPaused ? 'pause' : 'play'"></ion-icon>
+          <span>{{ session.isPaused ? 'متوقف' : 'نشط' }}</span>
+        </div>
+      </div>
+
+      <!-- Session Details Grid -->
+      <div class="session-details-grid">
+        <div class="detail-item">
+          <div class="detail-icon">
+            <ion-icon name="time-outline"></ion-icon>
+          </div>
+          <div class="detail-content">
+            <span class="detail-label">وقت البدء</span>
+            <span class="detail-value">{{ formatTime(session.startTime) }}</span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-icon">
+            <ion-icon name="hourglass-outline"></ion-icon>
+          </div>
+          <div class="detail-content">
+            <span class="detail-label">المدة</span>
+            <span class="detail-value">{{ duration }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session Meta Footer -->
+      <div class="session-meta-footer">
+        <ion-chip 
+          class="player-count-chip"
+          [color]="session.playerCount === '1-2' ? 'primary' : 'secondary'"
+        >
+          {{ session.playerCount === '1-2' ? '1-2 لاعبين' : '3-4 لاعبين' }}
+        </ion-chip>
+
+        <div class="customer-badge">
+          <ion-icon name="person-outline"></ion-icon>
+          <span>{{ session.customerName || 'عميل' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session Actions -->
+    <div class="session-actions">
+      <!-- Session Cost -->
+      <ion-badge class="session-cost-badge">
+        {{ formatCurrency(cost) }}
+      </ion-badge>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <ion-button 
+          fill="solid"
+          (click)="togglePause.emit(session.id); $event.stopPropagation()"
+        >
+          <ion-icon [name]="session.isPaused ? 'play' : 'pause'"></ion-icon>
+        </ion-button>
+
+        <ion-button 
+          fill="solid"
+          color="danger"
+          (click)="endSession.emit(session.id); $event.stopPropagation()"
+        >
+          <ion-icon name="stop"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-item>

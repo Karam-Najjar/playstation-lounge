@@ -1,0 +1,80 @@
+<app-layout
+  title="🎮 PlayStation Lounge"
+  [showLogout]="true"
+  [isPinEnabled]="isPinEnabled()"
+  (logout)="handleLogout()"
+  [showDarkModeToggle]="true"
+>
+  <!-- KPI Cards Grid -->
+  <ion-grid class="kpi-grid">
+    <ion-row>
+      <ion-col size="6" size-md="3">
+        <app-kpi-card
+          title="إيرادات اليوم"
+          [value]="todayRevenue()"
+          subtitle="الإجمالي اليوم"
+          icon="cash"
+          color="success"
+        ></app-kpi-card>
+      </ion-col>
+
+      <ion-col size="6" size-md="3">
+        <app-kpi-card
+          title="جلسات نشطة"
+          [value]="activeSessions().length"
+          subtitle="جاري التشغيل"
+          icon="game-controller"
+          color="primary"
+        ></app-kpi-card>
+      </ion-col>
+
+      <ion-col size="6" size-md="3">
+        <app-kpi-card
+          title="جلسات اليوم"
+          [value]="todaySessions().length"
+          subtitle="الإجمالي اليوم"
+          icon="people"
+          color="info"
+        ></app-kpi-card>
+      </ion-col>
+
+      <ion-col size="6" size-md="3">
+        <app-kpi-card
+          title="ساعات اللعب"
+          [value]="totalHoursPlayed()"
+          subtitle="إجمالي الوقت"
+          icon="time"
+          color="warning"
+        ></app-kpi-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Active Sessions Section -->
+  @if (activeSessions().length > 0) {
+    <ion-card class="sessions-card">
+      <ion-card-header>
+        <ion-card-title>الجلسات النشطة ({{ activeSessions().length }})</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        @for (session of activeSessions(); track session.id) {
+          <app-active-session
+            [session]="session"
+            [duration]="getSessionDuration(session)"
+            [cost]="getSessionCost(session)"
+            [formatTime]="formatTime.bind(this)"
+            [formatCurrency]="formatCurrency.bind(this)"
+            (togglePause)="handleTogglePause($event)"
+            (endSession)="handleEndSession($event)"
+          ></app-active-session>
+        }
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <!-- Quick Actions -->
+  <app-quick-actions [actions]="quickActions"></app-quick-actions>
+
+  <div class="bottom-spacer"></div>
+</app-layout>

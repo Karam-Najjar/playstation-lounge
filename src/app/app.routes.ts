@@ -8,34 +8,12 @@ export const routes: Routes = [
   },
   {
     path: '',
-    loadComponent: () =>
-      import('./pages/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+    loadChildren: () => import('./pages/dashboard/dashboard.routes').then(m => m.DASHBOARD_ROUTES),
     canActivate: [pinGuard],
   },
   {
-    path: 'new-session',
-    loadComponent: () =>
-      import('./pages/new-session/new-session.component').then((m) => m.NewSessionComponent),
-    canActivate: [pinGuard],
-  },
-  {
-    path: 'session/:id',
-    loadComponent: () =>
-      import('./pages/session-detail/session-detail.component').then(
-        (m) => m.SessionDetailComponent,
-      ),
-    canActivate: [pinGuard],
-  },
-  {
-    path: 'history',
-    loadComponent: () =>
-      import('./pages/history/history.component').then((m) => m.HistoryComponent),
-    canActivate: [pinGuard],
-  },
-  {
-    path: 'settings',
-    loadComponent: () =>
-      import('./pages/settings/settings.component').then((m) => m.SettingsComponent),
-    canActivate: [pinGuard],
-  },
+    path: '**',
+    redirectTo: '',
+    pathMatch: 'full'
+  }
 ];

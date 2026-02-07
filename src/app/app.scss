@@ -1,0 +1,89 @@
+// Global modern font
+* {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+// Custom toolbar subtitle
+.toolbar-subtitle {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: -4px;
+}
+
+// Card subtitle
+.card-subtitle {
+  font-size: 12px;
+  color: var(--gray-color);
+  margin-top: 4px;
+}
+
+// Global dark mode styles
+.dark-mode {
+  // Override Ionic CSS variables for dark mode
+  --ion-background-color: #0f172a;
+  --ion-background-color-rgb: 15, 23, 42;
+  
+  --ion-text-color: #f1f5f9;
+  --ion-text-color-rgb: 241, 245, 249;
+  
+  --ion-color-step-50: #1e293b;
+  --ion-color-step-100: #334155;
+  --ion-color-step-150: #475569;
+  --ion-color-step-200: #64748b;
+  --ion-color-step-250: #94a3b8;
+  --ion-color-step-300: #cbd5e1;
+  --ion-color-step-350: #e2e8f0;
+  --ion-color-step-400: #f1f5f9;
+  --ion-color-step-450: #f8fafc;
+  --ion-color-step-500: #ffffff;
+  
+  // Custom color variables for your app
+  --primary-color: #818cf8;
+  --primary-dark: #6366f1;
+  --secondary-color: #2dd4bf;
+  --success-color: #34d399;
+  --warning-color: #fbbf24;
+  --danger-color: #f87171;
+  --dark-color: #0f172a;
+  --light-color: #1e293b;
+  --gray-color: #94a3b8;
+  --card-bg: #1e293b;
+  
+  // Background colors
+  background-color: #0f172a;
+  color: #f1f5f9;
+  
+  // Scrollbar styling for dark mode
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1e293b;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+    
+    &:hover {
+      background: #64748b;
+    }
+  }
+}
+
+// Smooth transitions for theme switching
+* {
+  transition: background-color 0.3s ease, 
+              border-color 0.3s ease,
+              color 0.3s ease;
+}
+
+// Ensure body transitions smoothly
+body {
+  transition: background-color 0.3s ease;
+  
+  &.dark-mode {
+    background-color: #0f172a;
+  }
+}
