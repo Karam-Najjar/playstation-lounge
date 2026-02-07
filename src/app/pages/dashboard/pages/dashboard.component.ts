@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnInit, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
@@ -15,7 +9,15 @@ import { ActiveSessionComponent } from '../components/active-session/active-sess
 import { Session } from '../../../models/session.model';
 import { KpiCardComponent } from '../components/kpi-card/kpi-card.component';
 import { QuickActionsComponent } from '../components/quick-actions/quick-action.component';
-import { IonCardHeader, IonCardTitle, IonCard, IonCardContent, IonCol, IonRow, IonGrid } from "@ionic/angular/standalone";
+import {
+  IonCardHeader,
+  IonCardTitle,
+  IonCard,
+  IonCardContent,
+  IonCol,
+  IonRow,
+  IonGrid,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-dashboard',
@@ -32,8 +34,8 @@ import { IonCardHeader, IonCardTitle, IonCard, IonCardContent, IonCol, IonRow, I
     IonCardContent,
     IonCol,
     IonRow,
-    IonGrid
-],
+    IonGrid,
+  ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
@@ -55,27 +57,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
       label: 'جلسة جديدة',
       icon: 'add',
       color: 'primary' as const,
-      route: '/new-session'
+      route: '/new-session',
     },
     {
       label: 'السجل',
       icon: 'time',
       color: 'secondary' as const,
-      route: '/history'
+      route: '/history',
     },
     {
       label: 'الإعدادات',
       icon: 'settings',
       color: 'tertiary' as const,
-      route: '/settings'
-    }
+      route: '/settings',
+    },
   ];
 
   private updateInterval?: Subscription;
 
   ngOnInit() {
     this.updateCalculations();
-    
+
     this.updateInterval = interval(1000).subscribe(() => {
       this.updateCalculations();
     });
@@ -90,21 +92,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const revenue = this.sessionService.todayRevenue();
     this.todayRevenue.set(FormatUtils.formatCurrency(revenue));
 
-    // Update total hours
+    // Update total hours - calculate all completed sessions today
     const totalMs = this.todaySessions()
-      .filter((s) => s.endTime)
+      .filter((s) => s.endTime) // Only completed sessions
       .reduce((total, session) => {
-        const duration =
-          session.endTime!.getTime() - session.startTime.getTime() - session.totalPausedDuration;
+        const duration = this.sessionService.calculateFinalDuration(session);
         return total + duration;
       }, 0);
 
-    this.totalHoursPlayed.set(FormatUtils.formatHours(totalMs) + ' ساعة');
+    // Add active sessions duration
+    const activeSessionsMs = this.activeSessions().reduce((total, session) => {
+      const duration = this.sessionService.calculateActiveDuration(session);
+      return total + duration;
+    }, 0);
+
+    const totalDuration = totalMs + activeSessionsMs;
+    this.totalHoursPlayed.set(FormatUtils.formatHours(totalDuration, 'compact'));
   }
 
   getSessionDuration(session: Session): string {
-    const duration = this.sessionService.calculateActiveDuration(session);
-    return FormatUtils.formatDuration(duration);
+    if (session.endTime) {
+      // For completed sessions, use final duration
+      const duration = this.sessionService.calculateFinalDuration(session);
+      return FormatUtils.formatDuration(duration); // Or use formatHoursMinutes(duration)
+    } else {
+      // For active sessions, use active duration
+      const duration = this.sessionService.calculateActiveDuration(session);
+      return FormatUtils.formatDuration(duration);
+    }
   }
 
   getSessionCost(session: Session): number {
