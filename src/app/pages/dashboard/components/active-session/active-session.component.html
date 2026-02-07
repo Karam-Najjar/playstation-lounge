@@ -1,8 +1,7 @@
 <ion-item
   class="active-session"
   [class.paused]="session.isPaused"
-  button
-  [routerLink]="['/session', session.id]"
+  (click)="handleItemClick($event)"
 >
   <div class="session-content">
     <!-- Session Information -->
@@ -56,7 +55,7 @@
     </div>
 
     <!-- Session Actions -->
-    <div class="session-actions">
+    <div class="session-actions" (click)="$event.stopPropagation()">
       <!-- Session Cost -->
       <ion-badge class="session-cost-badge">
         {{ formatCurrency(cost) }}
@@ -66,7 +65,7 @@
       <div class="action-buttons">
         <ion-button 
           fill="solid"
-          (click)="togglePause.emit(session.id); $event.stopPropagation()"
+          (click)="handleTogglePause($event)"
         >
           <ion-icon [name]="session.isPaused ? 'play' : 'pause'"></ion-icon>
         </ion-button>
@@ -74,7 +73,7 @@
         <ion-button 
           fill="solid"
           color="danger"
-          (click)="endSession.emit(session.id); $event.stopPropagation()"
+          (click)="handleEndSession($event)"
         >
           <ion-icon name="stop"></ion-icon>
         </ion-button>
