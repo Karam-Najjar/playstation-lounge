@@ -1,42 +1,9 @@
-// src/app/pages/history/history.component.ts
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonChip, IonSelect, IonSelectOption, IonGrid, IonRow, IonCol, IonNote, IonSegment, IonSegmentButton, IonModal, IonDatetime, IonAlert, IonBadge, IonButtons, IonTitle, IonToolbar, IonHeader, IonContent } from '@ionic/angular/standalone';
 import {
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonButton,
-  IonBackButton,
-  IonButtons,
-  IonIcon,
-  IonBadge,
-  IonChip,
-  IonSelect,
-  IonSelectOption,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonNote,
-  IonSegment,
-  IonSegmentButton,
-  IonDatetimeButton,
-  IonModal,
-  IonDatetime,
-  IonText,
-  IonAlert,
-} from '@ionic/angular/standalone';
-import {
-  arrowBack,
   calendar,
   filter,
   download,
@@ -45,12 +12,16 @@ import {
   receipt,
   statsChart,
   search,
+  documentText,
+  document,
+  informationCircle,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
-import { SessionService } from '../../services/session.service';
-import { FormatUtils } from '../../utils/format.utils';
-import { PaymentStatus } from '../../models/session.model';
-import { ExportService } from '../../services/export.service';
+import { Session } from '../../../models/session.model';
+import { ExportService } from '../../../services/export.service';
+import { SessionService } from '../../../services/session.service';
+import { HeaderService } from '../../../shared/services/header.service';
+import { FormatUtils } from '../../../utils/format.utils';
 
 @Component({
   selector: 'app-history',
@@ -59,10 +30,6 @@ import { ExportService } from '../../services/export.service';
     CommonModule,
     FormsModule,
     RouterModule,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
     IonCard,
     IonCardHeader,
     IonCardTitle,
@@ -71,8 +38,6 @@ import { ExportService } from '../../services/export.service';
     IonItem,
     IonLabel,
     IonButton,
-    IonBackButton,
-    IonButtons,
     IonIcon,
     IonChip,
     IonSelect,
@@ -80,18 +45,25 @@ import { ExportService } from '../../services/export.service';
     IonGrid,
     IonRow,
     IonCol,
-    IonNote,
     IonSegment,
     IonSegmentButton,
     IonModal,
     IonDatetime,
     IonAlert,
-  ],
+    IonButtons,
+    IonTitle,
+    IonToolbar,
+    IonHeader,
+    IonContent,
+    IonBadge
+],
   templateUrl: './history.component.html',
+  styleUrls: ['./history.component.scss']
 })
-export class HistoryComponent {
+export class HistoryComponent implements OnInit {
   private sessionService = inject(SessionService);
   private exportService = inject(ExportService);
+  private headerService = inject(HeaderService);
 
   // All sessions
   allSessions = computed(() => this.sessionService.todaySessions());
@@ -183,21 +155,6 @@ export class HistoryComponent {
     );
   });
 
-  // Alert methods
-  private showAlertMessage(message: string, header: string = 'ملاحظة'): void {
-    this.alertHeader.set(header);
-    this.alertMessage.set(message);
-    this.showAlert.set(true);
-  }
-
-  private showSuccess(message: string): void {
-    this.showAlertMessage(message, 'تمت العملية');
-  }
-
-  private showError(message: string): void {
-    this.showAlertMessage(message, 'خطأ');
-  }
-
   // Statistics
   stats = computed(() => {
     const sessions = this.filteredSessions();
@@ -261,7 +218,10 @@ export class HistoryComponent {
   });
 
   constructor() {
-    addIcons({ arrowBack, calendar, filter, download, cash, time, receipt, statsChart, search });
+    addIcons({ 
+      calendar, filter, download, cash, time, receipt, 
+      statsChart, search, documentText, document, informationCircle 
+    });
 
     // Set default dates for custom filter
     const today = new Date();
@@ -270,6 +230,17 @@ export class HistoryComponent {
 
     this.startDate.set(weekAgo.toISOString().split('T')[0]);
     this.endDate.set(today.toISOString().split('T')[0]);
+  }
+
+  ngOnInit() {
+    // Set header configuration
+    this.headerService.setConfig({
+      title: 'سجل الجلسات',
+      showBackButton: true,
+      showLogout: true,
+      showDarkModeToggle: true,
+      customActions: []
+    });
   }
 
   // Helper methods
@@ -289,25 +260,12 @@ export class HistoryComponent {
     return FormatUtils.formatDuration(milliseconds);
   }
 
-  calculateSessionTotal(session: any): number {
-    if (!session.endTime) return 0;
+  formatHours(milliseconds: number): string {
+    return FormatUtils.formatHours(milliseconds);
+  }
 
-    const duration =
-      session.endTime.getTime() - session.startTime.getTime() - session.totalPausedDuration;
-    const hours = duration / (1000 * 60 * 60);
-
-    const rate =
-      session.playerCount === '1-2'
-        ? this.sessionService.getSettings()?.rates.rateOneTwoPlayers || 7000
-        : this.sessionService.getSettings()?.rates.rateThreeFourPlayers || 10000;
-
-    const sessionCost = hours * rate;
-    const ordersTotal = session.orders.reduce(
-      (sum: number, order: any) => sum + order.totalPrice,
-      0,
-    );
-
-    return sessionCost + ordersTotal;
+  calculateSessionTotal(session: Session): number {
+    return this.sessionService.calculateSessionTotal(session);
   }
 
   // Export data
@@ -362,5 +320,20 @@ export class HistoryComponent {
       this.endDate.set(date.split('T')[0]);
     }
     this.showDateModal.set(false);
+  }
+
+  // Alert methods
+  private showAlertMessage(message: string, header: string = 'ملاحظة'): void {
+    this.alertHeader.set(header);
+    this.alertMessage.set(message);
+    this.showAlert.set(true);
+  }
+
+  private showSuccess(message: string): void {
+    this.showAlertMessage(message, 'تمت العملية');
+  }
+
+  private showError(message: string): void {
+    this.showAlertMessage(message, 'خطأ');
   }
 }

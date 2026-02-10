@@ -1,0 +1,526 @@
+<!-- Tabs Navigation -->
+<ion-segment 
+  class="settings-tabs"
+  [(ngModel)]="activeTab" 
+  value="rates"
+>
+  <ion-segment-button value="rates">
+    <ion-icon name="cash"></ion-icon>
+    <ion-label>الأسعار</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="products">
+    <ion-icon name="cafe"></ion-icon>
+    <ion-label>المنتجات</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="devices">
+    <ion-icon name="game-controller"></ion-icon>
+    <ion-label>الأجهزة</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="security">
+    <ion-icon name="shield-checkmark"></ion-icon>
+    <ion-label>الأمان</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="backup">
+    <ion-icon name="download"></ion-icon>
+    <ion-label>النسخ الاحتياطي</ion-label>
+  </ion-segment-button>
+</ion-segment>
+
+<!-- Rates Tab -->
+@if (activeTab() === 'rates') {
+  <ion-card class="settings-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="cash" slot="start"></ion-icon>
+        أسعار الجلسات
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="settings-form">
+        <!-- 1-2 Players Rate -->
+        <div class="form-item">
+          <label class="form-label">سعر ١-٢ لاعبين (ساعة)</label>
+          <div class="input-with-unit">
+            <ion-input
+              class="form-input"
+              [(ngModel)]="rates().rateOneTwoPlayers"
+              type="number"
+              min="0"
+              placeholder="أدخل السعر"
+            ></ion-input>
+            <span class="input-unit">ل.س</span>
+          </div>
+        </div>
+
+        <!-- 3-4 Players Rate -->
+        <div class="form-item">
+          <label class="form-label">سعر ٣-٤ لاعبين (ساعة)</label>
+          <div class="input-with-unit">
+            <ion-input
+              class="form-input"
+              [(ngModel)]="rates().rateThreeFourPlayers"
+              type="number"
+              min="0"
+              placeholder="أدخل السعر"
+            ></ion-input>
+            <span class="input-unit">ل.س</span>
+          </div>
+        </div>
+
+        <ion-button 
+          class="save-button"
+          expand="block" 
+          color="primary" 
+          (click)="saveRates()"
+        >
+          <ion-icon name="save" slot="start"></ion-icon>
+          حفظ الأسعار
+        </ion-button>
+
+        <!-- Rate Summary -->
+        <div class="summary-card">
+          <h3 class="summary-title">ملخص الأسعار</h3>
+          <div class="summary-content">
+            <div class="rate-item">
+              <span class="rate-label">١-٢ لاعبين:</span>
+              <span class="rate-value">{{ formatCurrency(rates().rateOneTwoPlayers) }}/ساعة</span>
+            </div>
+            <div class="rate-item">
+              <span class="rate-label">٣-٤ لاعبين:</span>
+              <span class="rate-value">{{ formatCurrency(rates().rateThreeFourPlayers) }}/ساعة</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+}
+
+<!-- Products Tab -->
+@if (activeTab() === 'products') {
+  <ion-card class="settings-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="cafe" slot="start"></ion-icon>
+        قائمة المنتجات
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="settings-form">
+        <!-- Add/Edit Product Form -->
+        <div class="form-item">
+          <label class="form-label">اسم المنتج</label>
+          <ion-input
+            class="form-input"
+            [(ngModel)]="newProduct().name"
+            type="text"
+            placeholder="أدخل اسم المنتج"
+          ></ion-input>
+        </div>
+
+        <div class="form-item">
+          <label class="form-label">السعر</label>
+          <div class="input-with-unit">
+            <ion-input
+              class="form-input"
+              [(ngModel)]="newProduct().price"
+              type="number"
+              min="0"
+              placeholder="أدخل السعر"
+            ></ion-input>
+            <span class="input-unit">ل.س</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <ion-button 
+            class="primary-button"
+            expand="block" 
+            color="primary" 
+            (click)="editingProductId() ? updateProduct() : addProduct()"
+          >
+            <ion-icon [name]="editingProductId() ? 'save' : 'add'" slot="start"></ion-icon>
+            {{ editingProductId() ? 'تحديث المنتج' : 'إضافة منتج' }}
+          </ion-button>
+          
+          @if (editingProductId()) {
+            <ion-button 
+              class="secondary-button"
+              expand="block" 
+              color="medium" 
+              fill="outline" 
+              (click)="cancelEdit()"
+            >
+              إلغاء التعديل
+            </ion-button>
+          }
+        </div>
+
+        <!-- Products List -->
+        <div class="list-section">
+          <h3 class="section-title">المنتجات المضافة</h3>
+          
+          @if (products().length > 0) {
+            <ion-list class="items-list">
+              @for (product of products(); track product.id) {
+                <ion-item class="list-item">
+                  <div class="item-content">
+                    <div class="item-main">
+                      <h4 class="item-name">{{ product.name }}</h4>
+                      <div class="item-price">{{ formatCurrency(product.price) }}</div>
+                    </div>
+                    <div class="item-actions">
+                      <ion-button 
+                        fill="clear" 
+                        color="primary" 
+                        (click)="editProduct(product)"
+                      >
+                        <ion-icon name="create" slot="icon-only"></ion-icon>
+                      </ion-button>
+                      <ion-button 
+                        fill="clear" 
+                        color="danger" 
+                        (click)="deleteProduct(product.id)"
+                      >
+                        <ion-icon name="trash" slot="icon-only"></ion-icon>
+                      </ion-button>
+                    </div>
+                  </div>
+                </ion-item>
+              }
+            </ion-list>
+          } @else {
+            <div class="empty-state">
+              <ion-icon name="cafe" size="large"></ion-icon>
+              <p class="empty-text">لا توجد منتجات مضافة</p>
+            </div>
+          }
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+}
+
+<!-- Devices Tab -->
+@if (activeTab() === 'devices') {
+  <ion-card class="settings-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="game-controller" slot="start"></ion-icon>
+        إدارة الأجهزة
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="settings-form">
+        <!-- Add/Edit Device Form -->
+        <div class="form-item">
+          <label class="form-label">اسم الجهاز</label>
+          <ion-input
+            class="form-input"
+            [(ngModel)]="newDevice"
+            type="text"
+            placeholder="مثال: PS5-1, PS4-2"
+          ></ion-input>
+        </div>
+
+        <div class="form-actions">
+          <ion-button 
+            class="primary-button"
+            expand="block" 
+            color="primary" 
+            (click)="editingDeviceIndex() !== null ? updateDevice() : addDevice()"
+          >
+            <ion-icon [name]="editingDeviceIndex() !== null ? 'save' : 'add'" slot="start"></ion-icon>
+            {{ editingDeviceIndex() !== null ? 'تحديث الجهاز' : 'إضافة جهاز' }}
+          </ion-button>
+          
+          @if (editingDeviceIndex() !== null) {
+            <ion-button 
+              class="secondary-button"
+              expand="block" 
+              color="medium" 
+              fill="outline" 
+              (click)="cancelDeviceEdit()"
+            >
+              إلغاء التعديل
+            </ion-button>
+          }
+        </div>
+
+        <!-- Devices List -->
+        <div class="list-section">
+          <h3 class="section-title">الأجهزة المتاحة</h3>
+          
+          @if (devices().length > 0) {
+            <ion-list class="items-list">
+              @for (device of devices(); track device; let i = $index) {
+                <ion-item class="list-item">
+                  <div class="item-content">
+                    <div class="item-main">
+                      <h4 class="item-name">{{ device }}</h4>
+                    </div>
+                    <div class="item-actions">
+                      <ion-button 
+                        fill="clear" 
+                        color="primary" 
+                        (click)="editDevice(i)"
+                      >
+                        <ion-icon name="create" slot="icon-only"></ion-icon>
+                      </ion-button>
+                      <ion-button 
+                        fill="clear" 
+                        color="danger" 
+                        (click)="deleteDevice(i)"
+                      >
+                        <ion-icon name="trash" slot="icon-only"></ion-icon>
+                      </ion-button>
+                    </div>
+                  </div>
+                </ion-item>
+              }
+            </ion-list>
+          } @else {
+            <div class="empty-state">
+              <ion-icon name="game-controller" size="large"></ion-icon>
+              <p class="empty-text">لا توجد أجهزة مضافة</p>
+            </div>
+          }
+        </div>
+
+        <!-- Note -->
+        <div class="info-card">
+          <ion-icon name="information-circle"></ion-icon>
+          <p class="info-text">
+            الأجهزة المضافة هنا ستظهر في قائمة اختيار الأجهزة عند بدء جلسة جديدة.
+          </p>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+}
+
+<!-- Security Tab -->
+@if (activeTab() === 'security') {
+  <ion-card class="settings-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="shield-checkmark" slot="start"></ion-icon>
+        إعدادات الأمان
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="settings-form">
+        <!-- PIN Toggle -->
+        <div class="security-item">
+          <div class="security-header">
+            <div class="security-info">
+              <h3 class="security-title">تفعيل رمز PIN</h3>
+              <p class="security-description">يحمي التطبيق من الوصول غير المصرح به</p>
+            </div>
+            <ion-toggle 
+              class="security-toggle"
+              [(ngModel)]="pinEnabled" 
+              (ionChange)="togglePin()"
+            ></ion-toggle>
+          </div>
+
+          <div class="security-status">
+            <ion-badge 
+              [color]="pinEnabled() ? 'success' : 'medium'"
+              class="status-badge"
+            >
+              <ion-icon [name]="pinEnabled() ? 'lock-closed' : 'lock-open'"></ion-icon>
+              {{ pinEnabled() ? 'مفعل' : 'معطل' }}
+            </ion-badge>
+          </div>
+        </div>
+
+        <!-- PIN Setup Info -->
+        <div class="info-card">
+          <ion-icon name="information-circle"></ion-icon>
+          <div class="info-content">
+            <p class="info-text">رمز PIN يحمي التطبيق من الوصول غير المصرح به.</p>
+            <p class="info-text">يجب إدخال رمز PIN مكون من 4 أرقام للوصول إلى لوحة التحكم.</p>
+          </div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+}
+
+<!-- Backup Tab -->
+@if (activeTab() === 'backup') {
+  <ion-card class="settings-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="download" slot="start"></ion-icon>
+        النسخ الاحتياطي
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="settings-form">
+        <!-- Export Section -->
+        <div class="backup-section">
+          <div class="backup-header">
+            <div class="backup-info">
+              <h3 class="backup-title">تصدير البيانات</h3>
+              <p class="backup-description">حفظ نسخة احتياطية من جميع الجلسات والإعدادات</p>
+            </div>
+            <ion-button 
+              class="backup-button"
+              color="primary" 
+              (click)="exportData()"
+            >
+              <ion-icon name="download" slot="start"></ion-icon>
+              تصدير
+            </ion-button>
+          </div>
+        </div>
+
+        <!-- Import Section -->
+        <div class="backup-section">
+          <div class="backup-header">
+            <div class="backup-info">
+              <h3 class="backup-title">استيراد البيانات</h3>
+              <p class="backup-description">استعادة البيانات من نسخة احتياطية</p>
+            </div>
+          </div>
+
+          <!-- Import Data Textarea -->
+          <ion-textarea
+            class="backup-textarea"
+            [(ngModel)]="backupData"
+            placeholder="الصق بيانات النسخة الاحتياطية هنا..."
+            autoGrow="true"
+            rows="5"
+          ></ion-textarea>
+
+          <!-- Import Status -->
+          @if (importStatus() !== 'idle') {
+            <div class="import-status" [class.success]="importStatus() === 'success'" [class.error]="importStatus() === 'error'">
+              <ion-icon [name]="importStatus() === 'success' ? 'checkmark-circle' : 'alert-circle'"></ion-icon>
+              <span>{{ importMessage() }}</span>
+            </div>
+          }
+
+          <!-- Import Button -->
+          <ion-button
+            class="import-button"
+            expand="block"
+            color="secondary"
+            (click)="importData()"
+          >
+            <ion-icon name="cloud-upload" slot="start"></ion-icon>
+            استيراد البيانات
+          </ion-button>
+        </div>
+
+        <!-- Clear Data -->
+        <div class="danger-zone">
+          <div class="danger-header">
+            <ion-icon name="warning" color="danger"></ion-icon>
+            <h3 class="danger-title">منطقة الخطر</h3>
+          </div>
+          <p class="danger-text">هذا الإجراء سيمسح جميع الجلسات والإعدادات بشكل نهائي.</p>
+          <ion-button 
+            class="danger-button"
+            expand="block" 
+            color="danger" 
+            fill="outline" 
+            (click)="clearAllData()"
+          >
+            <ion-icon name="trash" slot="start"></ion-icon>
+            مسح جميع البيانات
+          </ion-button>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+}
+
+<!-- PIN Setup Modal -->
+<ion-modal [isOpen]="showPinSetup()" (didDismiss)="cancelPinSetup()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>إعداد رمز PIN</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="cancelPinSetup()">إلغاء</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <div class="pin-modal-content">
+        <ion-card class="pin-card">
+          <ion-card-header>
+            <ion-card-title>تعيين رمز PIN</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <p class="pin-description">أدخل رمز PIN مكون من 4 أرقام</p>
+
+            <div class="pin-form">
+              <div class="form-item">
+                <label class="form-label">رمز PIN الجديد</label>
+                <ion-input
+                  class="pin-input"
+                  [(ngModel)]="newPin"
+                  type="password"
+                  inputmode="numeric"
+                  maxlength="4"
+                  placeholder="أدخل 4 أرقام"
+                ></ion-input>
+              </div>
+
+              <div class="form-item">
+                <label class="form-label">تأكيد رمز PIN</label>
+                <ion-input
+                  class="pin-input"
+                  [(ngModel)]="confirmPin"
+                  type="password"
+                  inputmode="numeric"
+                  maxlength="4"
+                  placeholder="أعد إدخال الرمز"
+                ></ion-input>
+              </div>
+            </div>
+
+            <ion-button
+              class="pin-save-button"
+              expand="block"
+              color="primary"
+              (click)="setupPin()"
+              [disabled]="!newPin() || newPin().length !== 4 || !confirmPin()"
+            >
+              <ion-icon name="lock-closed" slot="start"></ion-icon>
+              حفظ رمز PIN
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<!-- Delete Confirmation Alert -->
+<ion-alert
+  [isOpen]="showDeleteConfirm()"
+  header="تأكيد الحذف"
+  [message]="deleteConfirmMessage()"
+  [buttons]="getAlertButtons()"
+></ion-alert>
+
+<!-- Success/Error Alert -->
+<ion-alert
+  [isOpen]="showAlert()"
+  [header]="alertHeader()"
+  [message]="alertMessage()"
+  [buttons]="['حسناً']"
+  (didDismiss)="showAlert.set(false)"
+></ion-alert>

@@ -2,7 +2,6 @@ import { Component, OnInit, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
-import { LayoutComponent } from '../../../layout/layout/layout.component';
 import { SessionService } from '../../../services/session.service';
 import { FormatUtils } from '../../../utils/format.utils';
 import { ActiveSessionComponent } from '../components/active-session/active-session.component';
@@ -18,13 +17,13 @@ import {
   IonRow,
   IonGrid,
 } from '@ionic/angular/standalone';
+import { HeaderService } from '../../../shared/services/header.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     CommonModule,
-    LayoutComponent,
     KpiCardComponent,
     ActiveSessionComponent,
     QuickActionsComponent,
@@ -42,6 +41,7 @@ import {
 export class DashboardComponent implements OnInit, OnDestroy {
   private sessionService = inject(SessionService);
   private router = inject(Router);
+  private headerService = inject(HeaderService);
 
   // Data signals
   activeSessions = this.sessionService.activeSessions;
@@ -81,6 +81,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.updateInterval = interval(1000).subscribe(() => {
       this.updateCalculations();
     });
+
+    this.headerService.setDashboardConfig();
   }
 
   ngOnDestroy() {

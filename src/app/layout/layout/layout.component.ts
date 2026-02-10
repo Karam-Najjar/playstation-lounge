@@ -1,56 +1,42 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonButtons,
-  IonButton,
-  IonIcon,
-  IonToggle
-} from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { logOut, moon, sunny } from 'ionicons/icons';
-import { DarkModeService } from '../../services/dark-mode.service';
+import { RouterOutlet } from '@angular/router';
+import { IonContent } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../shared/components/header.component';
+import { HeaderService } from '../../shared/services/header.service';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
+    RouterOutlet,
     IonContent,
-    IonButtons,
-    IonButton,
-    IonIcon,
-    IonToggle
+    HeaderComponent
   ],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss']
 })
-export class LayoutComponent {
-  private darkModeService = inject(DarkModeService);
+export class LayoutComponent implements OnDestroy {
+  private headerService = inject(HeaderService);
   
-  @Input() title: string = '';
-  @Input() showLogout: boolean = true;
-  @Input() showDarkModeToggle: boolean = true;
-  @Input() isPinEnabled: boolean = false;
-  
-  @Output() logout = new EventEmitter<void>();
-  
-  // Dark mode state
-  isDarkMode = this.darkModeService.isDarkMode;
-
-  constructor() {
-    addIcons({ logOut, moon, sunny });
+  // Check if PIN is enabled
+  get isPinEnabled(): boolean {
+    return !!localStorage.getItem('app_pin');
   }
 
-  toggleDarkMode(): void {
-    this.darkModeService.toggleDarkMode();
+  handleLogout(): void {
+    localStorage.removeItem('authenticated');
+    localStorage.removeItem('auth_expiry');
+    // Navigation to pin page would be handled by route guard
+  }
+
+  handleBack(): void {
+    // Navigation is handled by the back button href
+  }
+  
+  // Reset header when layout is destroyed
+  ngOnDestroy(): void {
+    this.headerService.reset();
   }
 }
