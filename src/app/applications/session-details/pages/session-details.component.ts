@@ -10,34 +10,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import {
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonButton,
-  IonBackButton,
-  IonButtons,
-  IonIcon,
-  IonChip,
-  IonAlert,
-  IonModal,
-  IonSelect,
-  IonSelectOption,
-  IonInput,
-  IonText,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonNote,
-  IonCardSubtitle,
-} from '@ionic/angular/standalone';
+import { IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonList, IonItem, IonLabel, IonButton, IonButtons, IonIcon, IonChip, IonAlert, IonModal, IonSelect, IonSelectOption, IonInput, IonText, IonGrid, IonRow, IonCol, IonNote, IonCardSubtitle, IonContent } from '@ionic/angular/standalone';
 import { arrowBack, add, pause, play, stop, receipt, cash, time, cafe, card } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { Subscription, interval } from 'rxjs';
@@ -65,7 +38,6 @@ import { HeaderService } from '../../../shared/services/header.service';
     IonItem,
     IonLabel,
     IonButton,
-    IonBackButton,
     IonButtons,
     IonIcon,
     IonChip,
@@ -80,8 +52,10 @@ import { HeaderService } from '../../../shared/services/header.service';
     IonCol,
     IonNote,
     IonCardSubtitle,
-  ],
+    IonContent
+],
   templateUrl: './session-details.component.html',
+  styleUrl: './session-details.component.scss'
 })
 export class SessionDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
@@ -197,6 +171,13 @@ export class SessionDetailComponent implements OnInit, OnDestroy {
           });
         }
       }
+    });
+
+    this.headerService.setConfig({
+      title: 'تفاصيل الجلسة',
+      showBackButton: true,
+      showLogout: true,
+      showDarkModeToggle: true,
     });
   }
 
