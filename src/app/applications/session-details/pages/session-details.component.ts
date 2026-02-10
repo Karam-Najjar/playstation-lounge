@@ -11,7 +11,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
-  IonContent,
   IonHeader,
   IonTitle,
   IonToolbar,
@@ -42,10 +41,11 @@ import {
 import { arrowBack, add, pause, play, stop, receipt, cash, time, cafe, card } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { Subscription, interval } from 'rxjs';
-import { SessionService } from '../../services/session.service';
-import { FormatUtils } from '../../utils/format.utils';
-import { PaymentStatus } from '../../models/session.model';
-import { ExportService } from '../../services/export.service';
+import { PaymentStatus } from '../../../models/session.model';
+import { ExportService } from '../../../services/export.service';
+import { SessionService } from '../../../services/session.service';
+import { FormatUtils } from '../../../utils/format.utils';
+import { HeaderService } from '../../../shared/services/header.service';
 
 @Component({
   selector: 'app-session-detail',
@@ -54,7 +54,6 @@ import { ExportService } from '../../services/export.service';
     CommonModule,
     FormsModule,
     RouterModule,
-    IonContent,
     IonHeader,
     IonTitle,
     IonToolbar,
@@ -82,7 +81,7 @@ import { ExportService } from '../../services/export.service';
     IonNote,
     IonCardSubtitle,
   ],
-  templateUrl: './session-detail.component.html',
+  templateUrl: './session-details.component.html',
 })
 export class SessionDetailComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
@@ -90,6 +89,7 @@ export class SessionDetailComponent implements OnInit, OnDestroy {
   private sessionService = inject(SessionService);
   private cdr = inject(ChangeDetectorRef);
   private exportService = inject(ExportService);
+  private headerService = inject(HeaderService);
 
   // Session data
   sessionId = signal<string>('');

@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar>
+    @if (showBackButton()) {
+      <ion-buttons slot="start">
+        <ion-back-button
+          [defaultHref]="defaultBackHref()"
+          [text]="backButtonText()"
+          (click)="onBackClick()"
+        ></ion-back-button>
+      </ion-buttons>
+    }
+
+    <ion-title>{{ title() }}</ion-title>
+
+    <ion-buttons slot="end">
+      <!-- Custom Actions -->
+      @for (action of customActions(); track action.icon) {
+        <ion-button (click)="handleCustomAction(action)" fill="clear" [attr.aria-label]="action.label || action.icon">
+          <ion-icon [name]="action.icon" slot="icon-only"></ion-icon>
+        </ion-button>
+      }
+
+      <!-- Dark Mode Toggle -->
+      @if (showDarkModeToggle()) {
+        <div class="dark-mode-toggle">
+          <ion-icon [name]="isDarkMode() ? 'sunny' : 'moon'" class="dark-mode-icon"></ion-icon>
+          <ion-toggle
+            [checked]="isDarkMode()"
+            (ionChange)="toggleDarkMode()"
+            aria-label="تبديل الوضع الداكن"
+          ></ion-toggle>
+        </div>
+      }
+
+      <!-- Logout Button -->
+      @if (showLogout() && isPinEnabled) {
+        <ion-button (click)="logout.emit()" fill="clear">
+          <ion-icon name="log-out" slot="icon-only"></ion-icon>
+        </ion-button>
+      }
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

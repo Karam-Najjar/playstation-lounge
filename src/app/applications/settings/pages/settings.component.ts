@@ -1,38 +1,8 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonList, IonItem, IonLabel, IonInput, IonButton, IonIcon, IonAlert, IonGrid, IonRow, IonCol, IonNote, IonSegment, IonSegmentButton, IonText, IonModal, IonToggle, IonTextarea, IonBadge, IonHeader, IonToolbar, IonTitle, IonButtons, IonContent } from '@ionic/angular/standalone';
 import {
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonButton,
-  IonBackButton,
-  IonButtons,
-  IonIcon,
-  IonAlert,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonNote,
-  IonSegment,
-  IonSegmentButton,
-  IonText,
-  IonModal,
-  IonToggle,
-  IonTextarea,
-} from '@ionic/angular/standalone';
-import {
-  arrowBack,
   settings,
   save,
   trash,
@@ -48,12 +18,14 @@ import {
   gameController,
   refresh,
   create,
+  warning,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
-import { SessionService } from '../../services/session.service';
-import { StorageService } from '../../services/storage.service';
-import { FormatUtils } from '../../utils/format.utils';
-import { Product, RateSettings } from '../../models/settings.model';
+import { RateSettings, Product } from '../../../models/settings.model';
+import { SessionService } from '../../../services/session.service';
+import { StorageService } from '../../../services/storage.service';
+import { HeaderService } from '../../../shared/services/header.service';
+import { FormatUtils } from '../../../utils/format.utils';
 
 @Component({
   selector: 'app-settings',
@@ -61,11 +33,6 @@ import { Product, RateSettings } from '../../models/settings.model';
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
     IonCard,
     IonCardHeader,
     IonCardTitle,
@@ -75,26 +42,27 @@ import { Product, RateSettings } from '../../models/settings.model';
     IonLabel,
     IonInput,
     IonButton,
-    IonBackButton,
-    IonButtons,
     IonIcon,
     IonAlert,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonNote,
     IonSegment,
     IonSegmentButton,
-    IonText,
     IonModal,
     IonToggle,
     IonTextarea,
-  ],
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonBadge,
+    IonContent
+],
   templateUrl: './settings.component.html',
+  styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
   private sessionService = inject(SessionService);
   private storageService = inject(StorageService);
+  private headerService = inject(HeaderService);
 
   // Active tab
   activeTab = signal<'rates' | 'products' | 'devices' | 'security' | 'backup'>('rates');
@@ -142,7 +110,6 @@ export class SettingsComponent implements OnInit {
 
   constructor() {
     addIcons({
-      arrowBack,
       settings,
       save,
       trash,
@@ -158,10 +125,26 @@ export class SettingsComponent implements OnInit {
       gameController,
       refresh,
       create,
+      warning,
     });
   }
 
   ngOnInit() {
+    // Set header configuration
+    this.headerService.setConfig({
+      title: 'الإعدادات',
+      showBackButton: true,
+      showLogout: true,
+      showDarkModeToggle: true,
+      customActions: [
+        {
+          icon: 'refresh',
+          label: 'استعادة الإعدادات الافتراضية',
+          handler: () => this.resetToDefaults()
+        }
+      ]
+    });
+
     this.loadSettings();
   }
 
@@ -452,7 +435,7 @@ export class SettingsComponent implements OnInit {
     );
   }
 
-  // In settings.component.ts, add these methods:
+  // Alert buttons
   getAlertButtons(): any[] {
     return [
       {

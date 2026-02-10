@@ -1,0 +1,357 @@
+<!-- Export Modal Card -->
+<ion-card class="export-card">
+  <ion-card-header>
+    <ion-card-title>
+      <ion-icon name="download" slot="start"></ion-icon>
+      تصدير البيانات
+    </ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <p class="export-description">اختر صيغة التصدير للجلسات المفلترة</p>
+
+    <ion-grid class="export-options">
+      <ion-row>
+        <ion-col size="12" size-md="6">
+          <ion-button
+            class="export-button"
+            expand="block"
+            color="primary"
+            (click)="exportData('json')"
+            [disabled]="filteredSessions().length === 0"
+          >
+            <ion-icon name="document-text" slot="start"></ion-icon>
+            JSON
+          </ion-button>
+        </ion-col>
+        <ion-col size="12" size-md="6">
+          <ion-button
+            class="export-button"
+            expand="block"
+            color="danger"
+            (click)="exportData('pdf')"
+            [disabled]="filteredSessions().length === 0"
+          >
+            <ion-icon name="document" slot="start"></ion-icon>
+            PDF
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    @if (filteredSessions().length > 0) {
+      <div class="export-info">
+        <ion-icon name="information-circle" color="medium"></ion-icon>
+        <small>جاري تصدير {{ filteredSessions().length }} جلسة</small>
+      </div>
+    }
+  </ion-card-content>
+</ion-card>
+
+<!-- Statistics Summary -->
+<ion-card class="stats-card">
+  <ion-card-header>
+    <ion-card-title>
+      <ion-icon name="stats-chart" slot="start"></ion-icon>
+      الإحصائيات
+    </ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-grid class="stats-grid">
+      <ion-row>
+        <ion-col size="6" size-md="3">
+          <div class="stat-item">
+            <div class="stat-icon">
+              <ion-icon name="cash"></ion-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">إجمالي الإيرادات</div>
+              <div class="stat-value">{{ formatCurrency(stats().totalRevenue) }}</div>
+            </div>
+          </div>
+        </ion-col>
+        
+        <ion-col size="6" size-md="3">
+          <div class="stat-item">
+            <div class="stat-icon">
+              <ion-icon name="time"></ion-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">ساعات اللعب</div>
+              <div class="stat-value">{{ formatHours(stats().totalHours * 3600000) }}</div>
+            </div>
+          </div>
+        </ion-col>
+        
+        <ion-col size="6" size-md="3">
+          <div class="stat-item">
+            <div class="stat-icon">
+              <ion-icon name="receipt"></ion-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">عدد الجلسات</div>
+              <div class="stat-value">{{ stats().totalSessions }}</div>
+            </div>
+          </div>
+        </ion-col>
+        
+        <ion-col size="6" size-md="3">
+          <div class="stat-item">
+            <div class="stat-icon">
+              <ion-icon name="warning"></ion-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">المستحقات</div>
+              <div class="stat-value" [class.unpaid]="stats().unpaidAmount > 0">
+                {{ formatCurrency(stats().unpaidAmount) }}
+              </div>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>
+
+<!-- Filters -->
+<ion-card class="filters-card">
+  <ion-card-header>
+    <ion-card-title>
+      <ion-icon name="filter" slot="start"></ion-icon>
+      الفلاتر
+    </ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-list class="filters-list">
+      <!-- Date Filter -->
+      <div class="filter-section">
+        <div class="filter-label">الفترة الزمنية</div>
+        <ion-segment
+          class="date-segment"
+          [(ngModel)]="selectedDate"
+          (ionChange)="selectedDate.set($any($event).detail.value)"
+        >
+          <ion-segment-button value="today">
+            <ion-label>اليوم</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="yesterday">
+            <ion-label>أمس</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="week">
+            <ion-label>أسبوع</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="month">
+            <ion-label>شهر</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="custom">
+            <ion-label>مخصص</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+
+      <!-- Custom Date Range -->
+      @if (selectedDate() === 'custom') {
+        <div class="custom-date-range">
+          <div class="filter-label">النطاق الزمني المخصص</div>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="12" size-md="6">
+                <ion-button 
+                  class="date-button"
+                  expand="block" 
+                  fill="outline" 
+                  (click)="openDateModal('start')"
+                >
+                  <ion-icon name="calendar" slot="start"></ion-icon>
+                  {{ startDate() || 'من تاريخ' }}
+                </ion-button>
+              </ion-col>
+              <ion-col size="12" size-md="6">
+                <ion-button 
+                  class="date-button"
+                  expand="block" 
+                  fill="outline" 
+                  (click)="openDateModal('end')"
+                >
+                  <ion-icon name="calendar" slot="start"></ion-icon>
+                  {{ endDate() || 'إلى تاريخ' }}
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      }
+
+      <!-- Device Filter -->
+      <div class="filter-item">
+        <div class="filter-label">الجهاز</div>
+        <ion-select
+          class="filter-select"
+          [(ngModel)]="selectedDevice"
+          (ionChange)="selectedDevice.set($any($event).detail.value)"
+          interface="action-sheet"
+        >
+          @for (device of devices(); track device) {
+            <ion-select-option [value]="device">
+              {{ device === 'all' ? 'جميع الأجهزة' : device }}
+            </ion-select-option>
+          }
+        </ion-select>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="filter-item">
+        <div class="filter-label">حالة الدفع</div>
+        <ion-select
+          class="filter-select"
+          [(ngModel)]="selectedStatus"
+          (ionChange)="selectedStatus.set($any($event).detail.value)"
+          interface="action-sheet"
+        >
+          @for (option of statusOptions(); track option.value) {
+            <ion-select-option [value]="option.value">
+              {{ option.label }}
+            </ion-select-option>
+          }
+        </ion-select>
+      </div>
+    </ion-list>
+
+    <!-- Reset Button -->
+    <ion-button 
+      class="reset-button"
+      expand="block" 
+      fill="outline" 
+      color="medium" 
+      (click)="resetFilters()"
+    >
+      إعادة تعيين الفلاتر
+    </ion-button>
+  </ion-card-content>
+</ion-card>
+
+<!-- Sessions List -->
+@if (filteredSessions().length > 0) {
+  <ion-card class="sessions-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="receipt" slot="start"></ion-icon>
+        الجلسات ({{ filteredSessions().length }})
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list class="sessions-list">
+        @for (session of filteredSessions(); track session.id) {
+          <ion-item 
+            class="history-session-item"
+            button
+            [routerLink]="['/session', session.id]"
+          >
+            <div class="session-content">
+              <div class="session-header">
+                <h3 class="session-device">{{ session.deviceName }}</h3>
+                <div class="session-status">
+                  <ion-badge [color]="session.paymentStatus === 'paid' ? 'success' : 'warning'">
+                    {{ session.paymentStatus === 'paid' ? 'مدفوعة' : 'غير مدفوعة' }}
+                  </ion-badge>
+                </div>
+              </div>
+
+              <div class="session-details">
+                <div class="session-meta">
+                  <ion-chip 
+                    class="player-chip"
+                    [color]="session.playerCount === '1-2' ? 'primary' : 'secondary'"
+                    size="small"
+                  >
+                    {{ session.playerCount === '1-2' ? '1-2 لاعبين' : '3-4 لاعبين' }}
+                  </ion-chip>
+                  <div class="customer-info">
+                    <ion-icon name="person-outline"></ion-icon>
+                    <span>{{ session.customerName || 'عميل' }}</span>
+                  </div>
+                </div>
+
+                <div class="session-time">
+                  <div class="time-item">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    <span>{{ formatDate(session.createdAt) }}</span>
+                  </div>
+                  
+                  @if (session.endTime) {
+                    <div class="time-item">
+                      <ion-icon name="hourglass-outline"></ion-icon>
+                      <span>
+                        المدة: {{ formatDuration(session.endTime.getTime() - session.startTime.getTime() - session.totalPausedDuration) }}
+                      </span>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="session-cost">
+                <div class="cost-label">التكلفة</div>
+                <div class="cost-amount" [class.unpaid]="session.paymentStatus === 'unpaid'">
+                  {{ formatCurrency(calculateSessionTotal(session)) }}
+                </div>
+              </div>
+            </div>
+          </ion-item>
+        }
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+}
+
+<!-- No Results -->
+@if (filteredSessions().length === 0) {
+  <ion-card class="no-results-card">
+    <ion-card-content class="no-results-content">
+      <div class="no-results-icon">
+        <ion-icon name="search" size="large"></ion-icon>
+      </div>
+      <h3 class="no-results-title">لا توجد جلسات</h3>
+      <p class="no-results-message">لا توجد جلسات تطابق الفلاتر المحددة</p>
+      <ion-button fill="outline" (click)="resetFilters()">
+        إعادة تعيين الفلاتر
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+}
+
+<!-- Alert Component -->
+<ion-alert
+  [isOpen]="showAlert()"
+  [header]="alertHeader()"
+  [message]="alertMessage()"
+  [buttons]="['حسناً']"
+  (didDismiss)="showAlert.set(false)"
+></ion-alert>
+
+<!-- Date Selection Modal -->
+<ion-modal [isOpen]="showDateModal()" (didDismiss)="showDateModal.set(false)">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>
+          {{ dateModalType() === 'start' ? 'اختر تاريخ البدء' : 'اختر تاريخ الانتهاء' }}
+        </ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="showDateModal.set(false)">إغلاق</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <ion-datetime
+        [value]="dateModalType() === 'start' ? startDate() : endDate()"
+        (ionChange)="onDateChange($event)"
+        presentation="date"
+        locale="ar-SY"
+      ></ion-datetime>
+    </ion-content>
+  </ng-template>
+</ion-modal>
