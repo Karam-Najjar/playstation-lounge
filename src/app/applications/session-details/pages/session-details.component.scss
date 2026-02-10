@@ -1,37 +1,608 @@
 :host {
   display: block;
+  direction: rtl;
 }
 
-ion-card {
-  margin-bottom: 1rem;
+// Session Info Card
+.session-info-card {
+  --background: white;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  margin-bottom: 24px;
+  
+  ion-card-header {
+    padding: 20px 24px 12px 24px;
+    border-bottom: 2px solid #f1f5f9;
+    
+    ion-card-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      
+      ion-icon {
+        color: #4f46e5;
+        font-size: 24px;
+      }
+    }
+  }
+  
+  ion-card-content {
+    padding: 20px 24px;
+  }
 }
 
-ion-chip {
+.info-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 8px 0 0 0;
+}
+
+.player-chip {
+  font-weight: 600;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+// Cost Card
+.cost-card {
+  --background: white;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  margin-bottom: 24px;
+  
+  ion-card-header {
+    padding: 20px 24px 12px 24px;
+    border-bottom: 2px solid #f1f5f9;
+    
+    ion-card-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      
+      ion-icon {
+        color: #059669;
+        font-size: 24px;
+      }
+    }
+  }
+  
+  ion-card-content {
+    padding: 20px 24px;
+  }
+}
+
+.cost-list {
+  background: transparent;
+  padding: 0;
+}
+
+.cost-item {
+  --background: transparent;
+  --border-color: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --min-height: 56px;
+  
+  ion-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #475569;
+  }
+}
+
+.cost-note {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.total-item {
+  border-top: 2px solid #f1f5f9;
+  padding-top: 16px;
+  margin-top: 8px;
+  
+  ion-label {
+    color: #1e293b;
+    font-size: 16px;
+  }
+}
+
+.total-note {
+  font-size: 20px;
+  font-weight: 800;
+  color: #4f46e5;
+}
+
+// Orders Card
+.orders-card {
+  --background: white;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  margin-bottom: 24px;
+  
+  ion-card-header {
+    padding: 20px 24px 12px 24px;
+    border-bottom: 2px solid #f1f5f9;
+    
+    ion-card-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      
+      ion-icon {
+        color: #f59e0b;
+        font-size: 24px;
+      }
+    }
+  }
+  
+  ion-card-content {
+    padding: 20px 24px;
+  }
+}
+
+.orders-list {
+  background: transparent;
+  padding: 0;
+}
+
+.order-item {
+  --background: transparent;
+  --border-color: #f1f5f9;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --min-height: 64px;
+  
+  &:last-child {
+    --border-color: transparent;
+  }
+}
+
+.order-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+}
+
+.order-details {
+  font-size: 13px;
+  color: #64748b;
   margin: 0;
 }
 
-hr {
-  border: none;
-  border-top: 1px solid var(--ion-color-light);
-  margin: 1rem 0;
+.order-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #059669;
 }
 
-.invoice-total {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: var(--ion-color-primary);
+// Action Buttons
+.action-buttons {
+  padding: 0;
+  margin-bottom: 24px;
 }
 
-/* Responsive adjustments */
-@media (min-width: 768px) {
-  ion-content {
-    --padding-start: 2rem;
-    --padding-end: 2rem;
+.action-button {
+  --border-radius: 12px;
+  --box-shadow: 0 4px 12px;
+  font-weight: 600;
+  font-size: 15px;
+  height: 52px;
+  
+  ion-icon {
+    font-size: 18px;
   }
+  
+  &[color="success"] {
+    --background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    --box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+  }
+  
+  &[color="warning"] {
+    --background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    --box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  }
+  
+  &[color="danger"] {
+    --background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    --box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  }
+  
+  &[color="tertiary"] {
+    --background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+    --box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  }
+  
+  &[color="medium"] {
+    --background: linear-gradient(135deg, #64748b 0%, #94a3b8 100%);
+    --box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+  }
+  
+  &:hover:not([disabled]) {
+    --box-shadow: 0 6px 18px;
+    transform: translateY(-2px);
+    transition: all 0.2s ease;
+  }
+}
 
-  ion-card {
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+// Modals
+.modal-content {
+  padding: 20px;
+}
+
+// Add Order Modal
+.order-modal {
+  --height: auto;
+  --border-radius: 16px;
+}
+
+.modal-list {
+  background: transparent;
+  padding: 0;
+}
+
+.modal-item {
+  --background: transparent;
+  --border-color: #f1f5f9;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 16px;
+}
+
+.modal-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.modal-select {
+  --background: #f8fafc;
+  --border-radius: 10px;
+  --border-width: 2px;
+  --border-style: solid;
+  --border-color: #e2e8f0;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  width: 100%;
+  
+  &:focus-within {
+    --border-color: #4f46e5;
+    --background: white;
+  }
+}
+
+.modal-input {
+  --background: #f8fafc;
+  --border-radius: 10px;
+  --border-width: 2px;
+  --border-style: solid;
+  --border-color: #e2e8f0;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  width: 100%;
+  
+  &:focus-within {
+    --border-color: #4f46e5;
+    --background: white;
+  }
+}
+
+.modal-total {
+  font-size: 16px;
+  font-weight: 800;
+  color: #059669;
+}
+
+.modal-button {
+  --border-radius: 12px;
+  --background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  --box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  font-weight: 600;
+  font-size: 15px;
+  height: 52px;
+  margin-top: 24px;
+  
+  &:hover:not([disabled]) {
+    --box-shadow: 0 6px 18px rgba(79, 70, 229, 0.4);
+  }
+  
+  &[disabled] {
+    opacity: 0.6;
+    --box-shadow: none;
+  }
+}
+
+// Invoice Modal
+.invoice-modal {
+  --height: auto;
+  --border-radius: 16px;
+  --max-height: 90vh;
+}
+
+.invoice-card {
+  --background: white;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  margin-bottom: 20px;
+  
+  ion-card-header {
+    padding: 24px 24px 16px 24px;
+    border-bottom: 2px solid #f1f5f9;
+    text-align: center;
+  }
+}
+
+.invoice-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #4f46e5;
+  margin: 0 0 8px 0;
+}
+
+.invoice-subtitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.invoice-grid {
+  padding: 0;
+}
+
+.invoice-row {
+  margin-bottom: 12px;
+}
+
+.invoice-label {
+  font-size: 14px;
+  color: #64748b;
+  padding: 4px 0;
+}
+
+.invoice-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  text-align: left;
+  padding: 4px 0;
+}
+
+.invoice-divider {
+  margin: 20px 0;
+  
+  hr {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 0;
+  }
+}
+
+.invoice-total-row {
+  margin-top: 16px;
+}
+
+.invoice-total-label {
+  font-size: 16px;
+  color: #1e293b;
+  padding: 8px 0;
+}
+
+.invoice-total-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #4f46e5;
+  text-align: left;
+  padding: 8px 0;
+}
+
+.thank-you {
+  text-align: center;
+  margin-top: 24px;
+  padding: 16px;
+  background: #f0f9ff;
+  border-radius: 10px;
+  border: 1px solid #bae6fd;
+  
+  p {
+    font-size: 14px;
+    color: #0369a1;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+.invoice-buttons {
+  padding: 0;
+  margin-top: 20px;
+}
+
+.invoice-button {
+  --border-radius: 12px;
+  --box-shadow: 0 4px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  height: 48px;
+  margin-bottom: 12px;
+  
+  ion-icon {
+    font-size: 16px;
+  }
+  
+  &[color="success"] {
+    --background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    --box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+  }
+  
+  &[color="medium"] {
+    --background: linear-gradient(135deg, #64748b 0%, #94a3b8 100%);
+    --box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+  }
+  
+  &[color="warning"] {
+    --background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    --box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .session-info-card,
+  .cost-card,
+  .orders-card {
+    ion-card-header {
+      padding: 16px;
+    }
+    
+    ion-card-content {
+      padding: 16px;
+    }
+  }
+  
+  .action-buttons {
+    ion-col {
+      padding: 4px;
+    }
+  }
+  
+  .action-button {
+    height: 48px;
+    font-size: 14px;
+  }
+  
+  .modal-content {
+    padding: 16px;
+  }
+  
+  .invoice-buttons {
+    ion-col {
+      padding: 4px;
+    }
+  }
+  
+  .invoice-button {
+    height: 44px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .info-value {
+    font-size: 14px;
+  }
+  
+  .player-chip {
+    font-size: 12px;
+  }
+  
+  .total-note {
+    font-size: 18px;
+  }
+  
+  .action-button {
+    height: 44px;
+    font-size: 13px;
+  }
+}
+
+// Dark Mode Support
+@media (prefers-color-scheme: dark) {
+  :host-context(.dark-mode) {
+    .session-info-card,
+    .cost-card,
+    .orders-card,
+    .invoice-card {
+      --background: #1e293b;
+      border-color: #334155;
+      
+      ion-card-header {
+        border-bottom-color: #334155;
+        
+        ion-card-title {
+          color: #f1f5f9;
+          
+          ion-icon {
+            color: #6366f1;
+          }
+        }
+      }
+    }
+    
+    .info-value,
+    .invoice-value,
+    .invoice-total-label {
+      color: #f1f5f9;
+    }
+    
+    .cost-note {
+      color: #f1f5f9;
+    }
+    
+    .total-note {
+      color: #6366f1;
+    }
+    
+    .order-name {
+      color: #f1f5f9;
+    }
+    
+    .order-details {
+      color: #94a3b8;
+    }
+    
+    .modal-select,
+    .modal-input {
+      --background: #334155;
+      --border-color: #475569;
+      --color: #f1f5f9;
+      
+      &:focus-within {
+        --background: #475569;
+      }
+    }
+    
+    .modal-label,
+    .invoice-label {
+      color: #cbd5e1;
+    }
+    
+    .thank-you {
+      background: #1e3a8a;
+      border-color: #3b82f6;
+      
+      p {
+        color: #dbeafe;
+      }
+    }
+    
+    .invoice-divider hr {
+      border-color: #475569;
+    }
   }
 }
